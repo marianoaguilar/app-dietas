@@ -68,3 +68,22 @@ export async function planWeek(diet: Diet, startDate: string) {
 export async function setDone(date: string, meal_type: MealType, done: boolean) {
   await db.planned_meals.update([date, meal_type], { done })
 }
+
+export async function getSettings(): Promise<Settings> {
+  return (await db.settings.get('settings')) ?? { id: 'settings' }
+}
+
+export async function saveSettings(changes: Partial<Omit<Settings, 'id'>>) {
+  await db.transaction('rw', db.settings, async () => {
+    await db.settings.put({ ...(await getSettings()), ...changes, id: 'settings' })
+  })
+}
+
+// Un peso por fecha: si ya había uno ese día, se sustituye
+export async function saveWeight(date: string, weight_kg: number) {
+  await db.weight_entries.put({ date, weight_kg })
+}
+
+export async function addActivity(activity: Omit<Activity, 'id'>) {
+  await db.activities.add(activity)
+}

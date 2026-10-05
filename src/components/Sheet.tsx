@@ -3,11 +3,12 @@ import { useEffect, type ReactNode } from 'react'
 interface Props {
   title: string
   onClose: () => void
+  closeLabel?: string
   children: ReactNode
 }
 
 // Panel que se abre sobre la pantalla, con un botón grande para cerrarlo
-export function Sheet({ title, onClose, children }: Props) {
+export function Sheet({ title, onClose, closeLabel = 'Cerrar', children }: Props) {
   useEffect(() => {
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -31,7 +32,7 @@ export function Sheet({ title, onClose, children }: Props) {
           onClick={onClose}
           className="mt-6 min-h-14 w-full rounded-2xl bg-brand-soft text-lg font-semibold text-brand-dark"
         >
-          Cerrar
+          {closeLabel}
         </button>
       </div>
     </div>

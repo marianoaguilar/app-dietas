@@ -1,8 +1,14 @@
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useState } from 'react'
+import { ActivityForm } from '../components/ActivityForm'
 import { DishList } from '../components/DishList'
+import { ProgressBar } from '../components/ProgressBar'
+import { WeightForm } from '../components/WeightForm'
 import { formatLong } from '../dates'
-import { db, setDone, type PlannedMeal } from '../db'
+import { db, getSettings, setDone, type PlannedMeal } from '../db'
 import { mealLabels, mealOrder, mealsById } from '../diets'
+import { fmt } from '../format'
+import { sumKm, weekday, weekStart } from '../stats'
 import { useToday } from '../useToday'
 
 export function Hoy({ onChooseDiet }: { onChooseDiet: () => void }) {
@@ -22,6 +28,8 @@ export function Hoy({ onChooseDiet }: { onChooseDiet: () => void }) {
         <h1 className="text-3xl font-bold">Hoy</h1>
         <p className="text-lg text-muted first-letter:uppercase">{formatLong(today)}</p>
       </header>
+
+      <WeighReminder today={today} />
 
       {meals.length === 0 ? (
         <section className="rounded-3xl bg-white p-6 shadow-sm">
@@ -44,6 +52,8 @@ export function Hoy({ onChooseDiet }: { onChooseDiet: () => void }) {
           ))}
         </>
       )}
+
+      <WeekKm today={today} />
     </div>
   )
 }
@@ -78,5 +88,53 @@ function MealCard({ planned }: { planned: PlannedMeal }) {
         )}
       </button>
     </section>
+  )
+}
+
+function WeighReminder({ today }: { today: string }) {
+  const [open, setOpen] = useState(false)
+  const settings = useLiveQuery(getSettings)
+  const weighedToday = useLiveQuery(async () => (await db.weight_entries.get(today)) != null, [today])
+
+  if (!settings || weighedToday === undefined) return null
+  if (settings.weigh_in_weekday !== weekday(today) || weighedToday) return null
+
+  return (
+    <>
+      <section className="flex items-center justify-between gap-3 rounded-3xl bg-brand-soft p-4">
+        <p className="text-lg font-medium text-brand-dark">Hoy es tu día de pesarte.</p>
+        <button onClick={() => setOpen(true)} className="min-h-12 shrink-0 rounded-2xl bg-brand px-4 text-lg font-semibold text-white">
+          Apuntar
+        </button>
+      </section>
+      {open && <WeightForm onClose={() => setOpen(false)} />}
+    </>
+  )
+}
+
+function WeekKm({ today }: { today: string }) {
+  const [open, setOpen] = useState(false)
+  const settings = useLiveQuery(getSettings)
+  const weekActivities = useLiveQuery(() => db.activities.where('date').between(weekStart(today), today, true, true).toArray(), [today])
+
+  if (!settings || !weekActivities) return null
+
+  const km = sumKm(weekActivities)
+  const goal = settings.weekly_km_goal
+
+  return (
+    <>
+      <section className="space-y-3 rounded-3xl bg-white p-5 shadow-sm">
+        <p className="text-lg">
+          Esta semana: <span className="text-2xl font-bold">{fmt(km)} km</span>
+          {goal != null && <span className="text-muted"> de {fmt(goal)}</span>}
+        </p>
+        {goal != null && <ProgressBar pct={(km / goal) * 100} label="Kilómetros de la semana" />}
+        <button onClick={() => setOpen(true)} className="min-h-14 w-full rounded-2xl bg-brand-soft text-lg font-semibold text-brand-dark">
+          Apuntar actividad
+        </button>
+      </section>
+      {open && <ActivityForm onClose={() => setOpen(false)} />}
+    </>
   )
 }

@@ -19,3 +19,8 @@ export function formatLong(dateStr: string) {
   const [y, m, d] = dateStr.split('-').map(Number)
   return new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(y, m - 1, d))
 }
+
+export function formatShort(dateStr: string) {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short' }).format(new Date(y, m - 1, d))
+}

@@ -26,9 +26,9 @@ export function DishDetails({ dish, onClose }: { dish: Dish; onClose: () => void
           <h3 className="mb-2 text-xl font-semibold">Ingredientes</h3>
           <ul className="mb-6 divide-y divide-black/10 rounded-2xl bg-cream">
             {dish.ingredients.map((ing, i) => (
-              <li key={i} className="flex flex-wrap justify-between gap-x-4 px-4 py-3">
-                <span className="font-medium">{ing.food}</span>
-                <span className="text-muted">{amount(ing)}</span>
+              <li key={i} className="px-4 py-3">
+                <span className="block font-medium">{ing.food}</span>
+                <span className="block text-muted">{amount(ing)}</span>
               </li>
             ))}
           </ul>
@@ -37,7 +37,11 @@ export function DishDetails({ dish, onClose }: { dish: Dish; onClose: () => void
       {dish.recipe && (
         <>
           <h3 className="mb-2 text-xl font-semibold">Cómo se hace</h3>
-          <p className="leading-relaxed whitespace-pre-line">{dish.recipe}</p>
+          <div className="space-y-3 leading-relaxed">
+            {dish.recipe.split('\n').map((step, i) => (
+              <p key={i}>{step}</p>
+            ))}
+          </div>
         </>
       )}
     </Sheet>
