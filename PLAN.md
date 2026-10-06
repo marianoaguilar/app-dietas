@@ -44,7 +44,7 @@ Las dietas van en un archivo JSON dentro del código. Lo que hace mi padre se gu
 | `planned_meals` | Qué toca cada fecha y si se cumplió | `date`, `meal_type`, `meal_id` (el `id` de la comida en el JSON), `done`; uno por fecha y tipo |
 | `weight_entries` | Historial de peso | `date` única, `weight_kg` con un decimal |
 | `activity_days` | Días que salió a hacer actividad | `date` única; no se guarda tipo, minutos ni km |
-| `settings` | Objetivos y estado, un solo registro | `start_weight_kg`, `target_weight_kg`, `weigh_in_weekday`, `active_diet_id`, `rotation_start` (fecha del día 1 de la rotación), `shopping_checked` (lo tachado en la compra) |
+| `settings` | Objetivos y estado, un solo registro | `start_weight_kg`, `target_weight_kg`, `weigh_in_weekday`, `active_diet_id`, `rotation_start` (fecha del día 1 de la rotación), `shopping_checked` (lo tachado en la compra), `celebrated_kg` (último kilo bajado que ya se celebró) |
 
 `meal_type` tiene cuatro valores: `desayuno`, `comida`, `merienda` y `cena`. Ninguna dieta incluye media mañana.
 
@@ -60,6 +60,7 @@ Cómo encajan las piezas:
 - **Observaciones:** las notas del nutricionista van en `notes` y se muestran al ver la dieta.
 - **Lista de la compra:** en las dietas del nutricionista se copia tal cual del PDF. En las personalizadas se genera con un script sumando los ingredientes de sus 7 días, se revisa a mano y se guarda en `shopping_list`. Lo tachado se guarda en `shopping_checked` y se vacía al empezar cada semana.
 - **Progreso de peso:** (inicial − actual) / (inicial − objetivo) × 100, limitado entre 0 y 100.
+- **Kilos celebrados:** al guardar un peso, si lo bajado desde el inicio llega a un kilo entero nuevo, se celebra una vez y se guarda en `celebrated_kg`.
 - **Actividad:** salir cuenta, sin importar cuánto. Marcar un día crea su registro en `activity_days` y desmarcarlo lo borra. Los días por semana y por mes se calculan contando registros.
 - **Migración:** las actividades apuntadas antes de este cambio (almacén `activities`, con minutos y km) se convierten en días marcados, uno por fecha, y el almacén antiguo se elimina.
 
@@ -197,3 +198,7 @@ La app tiene que poder usarse sin pensar y no debe hacerle sentir mal nunca. Est
 - **Peso semanal:** la app sugiere pesarse un día fijo. No hay gráfica de peso: se enseña lo bajado desde el inicio y la barra del camino, no cada subida o bajada.
 - **Días reales:** todo lo que come sale de días completos de las dietas del nutricionista.
 - **Nada que decidir:** la app sabe qué toca cada día sin que él tenga que elegir.
+- **Color con significado:** cada comida tiene su color e icono (desayuno ámbar con sol, comida teja con cubiertos, merienda coral con taza, cena índigo con luna). El verde es para lo que está bien hecho.
+- **Animaciones cortas y con sentido:** menos de un segundo, solo como respuesta a lo que él hace, y desactivadas si el iPhone tiene "Reducir movimiento".
+- **Momentos de premio:** confeti al marcar la última comida del día y al llegar a cada kilo entero bajado.
+- **Tipografía redondeada del iPhone** (SF Pro Rounded), que viene en el sistema.

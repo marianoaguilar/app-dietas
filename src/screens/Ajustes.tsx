@@ -33,7 +33,7 @@ export function Ajustes({ settings, firstWeight, onBack }: { settings: Settings;
         ‹ Progreso
       </button>
       <h1 className="text-3xl font-bold">Ajustes</h1>
-      <section className="space-y-5 rounded-3xl bg-white p-5 shadow-sm">
+      <section className="space-y-5 rounded-3xl bg-white p-5 shadow-card">
         <NumberField label="Peso al empezar" unit="kg" value={start} onChange={setStart} />
         <NumberField label="Peso objetivo" unit="kg" value={target} onChange={setTarget} />
         <div>

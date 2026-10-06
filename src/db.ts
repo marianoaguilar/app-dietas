@@ -25,6 +25,7 @@ export interface Settings {
   target_weight_kg?: number
   weigh_in_weekday?: number
   active_diet_id?: string
+  celebrated_kg?: number // último kilo bajado que ya se celebró
 }
 
 class DietDB extends Dexie {
@@ -87,9 +88,21 @@ export async function saveSettings(changes: Partial<Omit<Settings, 'id'>>) {
   })
 }
 
-// Un peso por fecha: si ya había uno ese día, se sustituye
-export async function saveWeight(date: string, weight_kg: number) {
-  await db.weight_entries.put({ date, weight_kg })
+// Un peso por fecha: si ya había uno ese día, se sustituye.
+// Devuelve los kilos bajados si se acaba de llegar a un kilo entero nuevo, para celebrarlo una sola vez.
+export async function saveWeight(date: string, weight_kg: number): Promise<number | null> {
+  return db.transaction('rw', db.weight_entries, db.settings, async () => {
+    await db.weight_entries.put({ date, weight_kg })
+    const settings = await getSettings()
+    const first = await db.weight_entries.orderBy('date').first()
+    const last = await db.weight_entries.orderBy('date').last()
+    const start = settings.start_weight_kg ?? first?.weight_kg
+    if (start == null || !last) return null
+    const kilos = Math.floor(start - last.weight_kg + 1e-9)
+    if (kilos < 1 || kilos <= (settings.celebrated_kg ?? 0)) return null
+    await db.settings.put({ ...settings, celebrated_kg: kilos })
+    return kilos
+  })
 }
 
 export async function setActivityDay(date: string, done: boolean) {

@@ -9,7 +9,7 @@ export function dayState(date: string, today: string, done: boolean): DayState {
 }
 
 const styles: Record<DayState, string> = {
-  done: 'bg-brand text-white',
+  done: 'bg-linear-to-br from-brand-light to-brand text-white shadow-sm',
   today: 'border-2 border-dashed border-brand text-brand-dark',
   past: 'bg-black/5 text-muted',
   future: 'text-muted/60',
@@ -18,10 +18,11 @@ const styles: Record<DayState, string> = {
 export function DayCircle({ state, label, pop = false }: { state: DayState; label: string; pop?: boolean }) {
   return (
     <span
-      className={`flex aspect-square w-full max-w-12 items-center justify-center rounded-full font-semibold ${styles[state]} ${pop ? 'animate-pop' : ''}`}
+      className={`relative flex aspect-square w-full max-w-12 items-center justify-center rounded-full font-semibold tabular-nums ${styles[state]} ${pop ? 'animate-pop' : ''}`}
     >
+      {pop && <span className="animate-ripple absolute inset-0 rounded-full bg-brand-light" aria-hidden="true" />}
       {state === 'done' ? (
-        <svg viewBox="0 0 24 24" className="h-1/2 w-1/2" fill="none" stroke="currentColor" strokeWidth={3} aria-hidden="true">
+        <svg viewBox="0 0 24 24" className={`relative h-1/2 w-1/2 ${pop ? 'animate-draw' : ''}`} fill="none" stroke="currentColor" strokeWidth={3} aria-hidden="true">
           <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       ) : (

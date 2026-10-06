@@ -15,9 +15,11 @@ export default function App() {
   return (
     <>
       <main className="mx-auto max-w-xl px-4 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-32">
-        {tab === 'hoy' && <Hoy onChooseDiet={() => go('dietas')} />}
-        {tab === 'progreso' && <Progreso />}
-        {tab === 'dietas' && <Dietas onChosen={() => go('hoy')} />}
+        <div key={tab} className="animate-screen">
+          {tab === 'hoy' && <Hoy onChooseDiet={() => go('dietas')} />}
+          {tab === 'progreso' && <Progreso />}
+          {tab === 'dietas' && <Dietas onChosen={() => go('hoy')} />}
+        </div>
       </main>
       <TabBar current={tab} onChange={go} />
     </>

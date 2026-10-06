@@ -55,7 +55,7 @@ export function Progreso() {
         </button>
       </header>
 
-      <button onClick={() => setWeighing(true)} className="min-h-16 w-full rounded-2xl bg-brand text-lg font-semibold text-white">
+      <button onClick={() => setWeighing(true)} className="min-h-16 w-full rounded-2xl bg-brand text-lg font-semibold text-white shadow-sm">
         Apuntar peso
       </button>
 
@@ -63,18 +63,25 @@ export function Progreso() {
         <p className="rounded-2xl bg-brand-soft px-4 py-3 text-lg font-medium text-brand-dark">Hoy es tu día de pesarte.</p>
       )}
 
-      <section className="space-y-4 rounded-3xl bg-white p-5 shadow-sm">
+      <section className="space-y-4 rounded-3xl bg-white p-5 shadow-card">
         <h2 className="text-2xl font-bold">Peso</h2>
         {!last ? (
           <p className="text-lg">Apunta tu peso y aquí verás todo lo que vas bajando.</p>
         ) : (
           <>
             <div>
-              <p className="text-4xl font-bold">{fmtKg(last.weight_kg)} kg</p>
-              <p className="text-lg text-muted">Último peso, {formatShort(last.date)}</p>
+              <p className="text-5xl font-bold tracking-tight tabular-nums">
+                {fmtKg(last.weight_kg)} <span className="text-2xl font-semibold text-muted">kg</span>
+              </p>
+              <p className="mt-1 text-lg text-muted">Último peso, {formatShort(last.date)}</p>
             </div>
             {lost >= 0.1 && (
-              <p className="text-lg font-semibold text-brand-dark">Has bajado {fmt(lost)} kg desde el inicio.</p>
+              <p className="flex items-center gap-2 rounded-2xl bg-brand-soft px-4 py-3 text-lg font-semibold text-brand-dark">
+                <svg viewBox="0 0 24 24" className="h-6 w-6 shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M12 5v14M6 13l6 6 6-6" />
+                </svg>
+                Has bajado {fmt(lost)} kg desde el inicio
+              </p>
             )}
             {target != null ? (
               <div className="space-y-2">
@@ -82,11 +89,11 @@ export function Progreso() {
                   <>
                     <ProgressBar pct={pct} label="Progreso hacia el peso objetivo" />
                     <p className="text-lg">
-                      <span className="font-semibold">{Math.round(pct)} %</span> del camino
+                      <span className="text-2xl font-bold text-brand tabular-nums">{Math.round(pct)} %</span> del camino
                     </p>
                   </>
                 )}
-                <p className="text-lg text-muted">Objetivo: {fmtKg(target)} kg</p>
+                <p className="text-lg text-muted tabular-nums">Objetivo: {fmtKg(target)} kg</p>
               </div>
             ) : (
               <button onClick={() => setView('ajustes')} className="min-h-12 text-lg font-semibold text-brand">

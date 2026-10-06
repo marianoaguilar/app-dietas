@@ -35,7 +35,7 @@ export function ActivityWeek({ today }: { today: string }) {
   }
 
   return (
-    <section aria-label="Salir a andar" className="space-y-3 rounded-3xl bg-white p-4 shadow-sm">
+    <section aria-label="Salir a andar" className="space-y-3 rounded-3xl bg-white p-4 shadow-card">
       <ol className="grid grid-cols-7 gap-1">
         {days.map((date, i) => (
           <li key={date} className="flex flex-col items-center gap-1" aria-label={`${formatLong(date)}${done.has(date) ? ': has salido' : ''}`}>
@@ -46,7 +46,11 @@ export function ActivityWeek({ today }: { today: string }) {
           </li>
         ))}
       </ol>
-      {message && <p className="px-1 text-lg font-medium text-brand-dark">{message}</p>}
+      {message && (
+        <p key={message} className="animate-fade-up px-1 text-lg font-medium text-brand-dark">
+          {message}
+        </p>
+      )}
       <button
         onClick={toggle}
         aria-pressed={doneToday}

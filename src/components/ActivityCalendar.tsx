@@ -44,7 +44,7 @@ export function ActivityCalendar({ today }: { today: string }) {
   }
 
   return (
-    <section className="space-y-4 rounded-3xl bg-white p-4 shadow-sm">
+    <section className="space-y-4 rounded-3xl bg-white p-4 shadow-card">
       <h2 className="px-1 text-2xl font-bold">Salir a andar</h2>
 
       <div className="flex items-center justify-between">
@@ -93,7 +93,7 @@ export function ActivityCalendar({ today }: { today: string }) {
       <div className="space-y-1 px-1">
         {count > 0 ? (
           <p className="text-lg">
-            <span className="text-2xl font-bold">
+            <span className="text-2xl font-bold text-brand tabular-nums">
               {count} {count === 1 ? 'día' : 'días'}
             </span>{' '}
             en {monthName(month)}

@@ -8,7 +8,7 @@ const tabs: { id: Tab; label: string; icon: string }[] = [
 
 export function TabBar({ current, onChange }: { current: Tab; onChange: (tab: Tab) => void }) {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-black/5 bg-white/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
       <ul className="mx-auto flex max-w-xl">
         {tabs.map((tab) => {
           const active = tab.id === current
@@ -17,13 +17,16 @@ export function TabBar({ current, onChange }: { current: Tab; onChange: (tab: Ta
               <button
                 onClick={() => onChange(tab.id)}
                 aria-current={active ? 'page' : undefined}
-                className={`flex min-h-16 w-full flex-col items-center justify-center gap-0.5 font-semibold ${
-                  active ? 'text-brand' : 'text-muted'
+                className={`flex min-h-16 w-full flex-col items-center justify-center gap-0.5 pt-1.5 font-semibold ${
+                  active ? 'text-brand-dark' : 'text-muted'
                 }`}
               >
-                <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d={tab.icon} />
-                </svg>
+                {/* La pestaña activa lleva una píldora de color detrás del icono */}
+                <span className={`flex h-8 w-16 items-center justify-center rounded-full transition-colors duration-300 ${active ? 'bg-brand-soft' : ''}`}>
+                  <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d={tab.icon} />
+                  </svg>
+                </span>
                 {tab.label}
               </button>
             </li>

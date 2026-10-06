@@ -32,7 +32,7 @@ export function Dietas({ onChosen }: { onChosen: () => void }) {
           <h1 className="text-3xl font-bold">Dietas</h1>
           <ul className="space-y-4">
             {diets.map((diet) => (
-              <li key={diet.id} className="rounded-3xl bg-white p-5 shadow-sm">
+              <li key={diet.id} className="rounded-3xl bg-white p-5 shadow-card">
                 <div className="mb-4 flex flex-wrap items-center gap-2">
                   <h2 className="text-xl font-bold">{dietTitle(diet)}</h2>
                   {diet.id === activeId && (
@@ -102,7 +102,7 @@ function DietDetail({ diet, active, onBack, onChoose }: { diet: Diet; active: bo
       </div>
 
       {day.meals.map((meal) => (
-        <section key={meal.id} className="rounded-3xl bg-white p-5 shadow-sm">
+        <section key={meal.id} className="rounded-3xl bg-white p-5 shadow-card">
           <div className="mb-3 flex items-baseline justify-between">
             <h2 className="text-xl font-bold">{mealLabels[meal.meal_type]}</h2>
             <span className="text-lg text-muted">{meal.time}</span>
@@ -112,7 +112,7 @@ function DietDetail({ diet, active, onBack, onChoose }: { diet: Diet; active: bo
       ))}
 
       {diet.notes.length > 0 && (
-        <section className="rounded-3xl bg-white p-5 shadow-sm">
+        <section className="rounded-3xl bg-white p-5 shadow-card">
           <h2 className="mb-3 text-xl font-bold">Consejos del nutricionista</h2>
           <ul className="list-disc space-y-2 pl-5">
             {diet.notes.map((note) => (

@@ -4,9 +4,25 @@
   --color-brand: #1f7a5c;
   --color-brand-dark: #165a44;
   --color-brand-soft: #e2f1ea;
-  --color-cream: #f7f4ee;
+  --color-brand-light: #3fb487;
+  --color-cream: #f8f3ea;
   --color-ink: #1d2a24;
   --color-muted: #5b6b63;
+
+  /* Un color por comida: el fuerte para el icono, el suave para el fondo */
+  --color-desayuno: #b06a00;
+  --color-desayuno-soft: #fff0d4;
+  --color-comida: #c0502a;
+  --color-comida-soft: #fde5da;
+  --color-merienda: #bf3a68;
+  --color-merienda-soft: #fde3ec;
+  --color-cena: #4a4fb5;
+  --color-cena-soft: #e6e7fb;
+
+  --shadow-card: 0 1px 2px rgb(60 40 10 / 0.05), 0 6px 20px rgb(60 40 10 / 0.07);
+
+  /* La redondeada del iPhone (SF Pro Rounded) viene en el sistema: no hay que descargar nada */
+  --font-sans: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 /* 1rem = 18px: ningún texto baja de 18px si no se usan text-sm ni text-xs */
@@ -19,15 +35,60 @@ body {
   margin: 0;
   background: var(--color-cream);
   color: var(--color-ink);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Los botones se hunden un poco al tocarlos: así se nota que el toque ha funcionado */
 button {
   cursor: pointer;
+  transition:
+    transform 0.12s ease-out,
+    background-color 0.25s,
+    color 0.25s,
+    border-color 0.25s;
 }
 
-/* El círculo de un día marcado se rellena con un pequeño salto */
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+/* Al cambiar de pestaña, la pantalla entra con un pequeño fundido */
+@keyframes screen-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+.animate-screen {
+  animation: screen-in 0.25s ease-out;
+}
+
+/* Un mensaje nuevo aparece suavemente */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(4px); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.3s ease-out;
+}
+
+/* Paneles: suben desde abajo mientras el fondo se oscurece */
+@keyframes sheet-in {
+  from { transform: translateY(100%); }
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+}
+
+.animate-sheet {
+  animation: sheet-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.animate-backdrop {
+  animation: backdrop-in 0.25s ease-out;
+}
+
+/* El círculo de un día marcado se rellena con un pequeño salto… */
 @keyframes pop {
   0% { transform: scale(0.6); }
   60% { transform: scale(1.15); }
@@ -38,8 +99,65 @@ button {
   animation: pop 0.35s ease-out;
 }
 
+/* …y una onda que se expande a su alrededor */
+@keyframes ripple {
+  from { transform: scale(1); opacity: 0.5; }
+  to { transform: scale(1.9); opacity: 0; }
+}
+
+.animate-ripple {
+  animation: ripple 0.7s ease-out forwards;
+}
+
+/* El check se dibuja de un trazo */
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.animate-draw path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: draw 0.35s 0.05s ease-out forwards;
+}
+
+/* La barra del camino se llena desde cero */
+@keyframes grow {
+  from { width: 0; }
+}
+
+.animate-grow {
+  animation: grow 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Confeti de celebración (ver celebrate.ts) */
+@keyframes confetti-fall {
+  to { transform: translate3d(var(--dx), 110vh, 0) rotate(var(--rot)); }
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  animation: confetti-fall var(--dur) var(--delay) cubic-bezier(0.25, 0.5, 0.5, 1) forwards;
+}
+
+/* Si el iPhone tiene activado "Reducir movimiento", nada se mueve */
 @media (prefers-reduced-motion: reduce) {
-  .animate-pop {
+  .animate-screen,
+  .animate-fade-up,
+  .animate-sheet,
+  .animate-backdrop,
+  .animate-pop,
+  .animate-grow {
     animation: none;
+  }
+  .animate-ripple {
+    display: none;
+  }
+  .animate-draw path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  button:not(:disabled):active {
+    transform: none;
   }
 }
