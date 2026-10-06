@@ -14,19 +14,15 @@ export interface WeightEntry {
   weight_kg: number
 }
 
-export interface Activity {
-  id?: number
+// Un registro por día que salió a hacer actividad: salir cuenta, sin importar cuánto
+export interface ActivityDay {
   date: string
-  type: string
-  minutes: number
-  km: number
 }
 
 export interface Settings {
   id: 'settings'
   start_weight_kg?: number
   target_weight_kg?: number
-  weekly_km_goal?: number
   weigh_in_weekday?: number
   active_diet_id?: string
 }
@@ -34,7 +30,7 @@ export interface Settings {
 class DietDB extends Dexie {
   planned_meals!: Table<PlannedMeal, [string, MealType]>
   weight_entries!: Table<WeightEntry, string>
-  activities!: Table<Activity, number>
+  activity_days!: Table<ActivityDay, string>
   settings!: Table<Settings, 'settings'>
 
   constructor() {
@@ -45,6 +41,18 @@ class DietDB extends Dexie {
       activities: '++id, date',
       settings: 'id',
     })
+    // Las actividades con minutos y km pasan a ser días marcados, uno por fecha
+    this.version(2)
+      .stores({ activity_days: 'date' })
+      .upgrade(async (tx) => {
+        const old: { date: string }[] = await tx.table('activities').toArray()
+        const dates = [...new Set(old.map((a) => a.date))]
+        await tx.table('activity_days').bulkPut(dates.map((date) => ({ date })))
+        await tx.table('settings').toCollection().modify((s) => {
+          delete s.weekly_km_goal
+        })
+      })
+    this.version(3).stores({ activities: null })
   }
 }
 
@@ -84,6 +92,7 @@ export async function saveWeight(date: string, weight_kg: number) {
   await db.weight_entries.put({ date, weight_kg })
 }
 
-export async function addActivity(activity: Omit<Activity, 'id'>) {
-  await db.activities.add(activity)
+export async function setActivityDay(date: string, done: boolean) {
+  if (done) await db.activity_days.put({ date })
+  else await db.activity_days.delete(date)
 }

@@ -1,14 +1,12 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useState } from 'react'
-import { ActivityForm } from '../components/ActivityForm'
+import { ActivityWeek } from '../components/ActivityWeek'
 import { DishList } from '../components/DishList'
-import { ProgressBar } from '../components/ProgressBar'
 import { WeightForm } from '../components/WeightForm'
 import { formatLong } from '../dates'
 import { db, getSettings, setDone, type PlannedMeal } from '../db'
 import { mealLabels, mealOrder, mealsById } from '../diets'
-import { fmt } from '../format'
-import { sumKm, weekday, weekStart } from '../stats'
+import { weekday } from '../stats'
 import { useToday } from '../useToday'
 
 export function Hoy({ onChooseDiet }: { onChooseDiet: () => void }) {
@@ -31,6 +29,8 @@ export function Hoy({ onChooseDiet }: { onChooseDiet: () => void }) {
 
       <WeighReminder today={today} />
 
+      <ActivityWeek today={today} />
+
       {meals.length === 0 ? (
         <section className="rounded-3xl bg-white p-6 shadow-sm">
           <p className="mb-5 text-xl">Elige la dieta de esta semana y aquí verás lo que toca comer cada día.</p>
@@ -52,8 +52,6 @@ export function Hoy({ onChooseDiet }: { onChooseDiet: () => void }) {
           ))}
         </>
       )}
-
-      <WeekKm today={today} />
     </div>
   )
 }
@@ -108,33 +106,6 @@ function WeighReminder({ today }: { today: string }) {
         </button>
       </section>
       {open && <WeightForm onClose={() => setOpen(false)} />}
-    </>
-  )
-}
-
-function WeekKm({ today }: { today: string }) {
-  const [open, setOpen] = useState(false)
-  const settings = useLiveQuery(getSettings)
-  const weekActivities = useLiveQuery(() => db.activities.where('date').between(weekStart(today), today, true, true).toArray(), [today])
-
-  if (!settings || !weekActivities) return null
-
-  const km = sumKm(weekActivities)
-  const goal = settings.weekly_km_goal
-
-  return (
-    <>
-      <section className="space-y-3 rounded-3xl bg-white p-5 shadow-sm">
-        <p className="text-lg">
-          Esta semana: <span className="text-2xl font-bold">{fmt(km)} km</span>
-          {goal != null && <span className="text-muted"> de {fmt(goal)}</span>}
-        </p>
-        {goal != null && <ProgressBar pct={(km / goal) * 100} label="Kilómetros de la semana" />}
-        <button onClick={() => setOpen(true)} className="min-h-14 w-full rounded-2xl bg-brand-soft text-lg font-semibold text-brand-dark">
-          Apuntar actividad
-        </button>
-      </section>
-      {open && <ActivityForm onClose={() => setOpen(false)} />}
     </>
   )
 }
